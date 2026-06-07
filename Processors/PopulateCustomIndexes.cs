@@ -21,11 +21,11 @@ namespace SergMedium.ManagedSchemaExample.Processors
             var solrIndexCoreMap = args.SolrIndexCoreMap;
             if (solrIndexCoreMap != null)
             {
-                PopulateSolrCores(solrIndexCoreMap, args.SchemaName);
+                PopulateSolrCores(solrIndexCoreMap);
             }
         }
 
-        private void PopulateSolrCores(IReadOnlyDictionary<SolrSearchIndex, string[]> indexCoreMap, string schemaName)
+        private void PopulateSolrCores(IReadOnlyDictionary<SolrSearchIndex, string[]> indexCoreMap)
         {
             if (indexCoreMap.Count == 0)
             {
