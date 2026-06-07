@@ -57,16 +57,16 @@
       <HintPath>packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Sitecore.ContentSearch, Version=11.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Sitecore.ContentSearch.10.4.1\lib\net48\Sitecore.ContentSearch.dll</HintPath>
+      <HintPath>packages\Sitecore.ContentSearch.10.4.0\lib\net48\Sitecore.ContentSearch.dll</HintPath>
     </Reference>
     <Reference Include="Sitecore.ContentSearch.SolrNetExtension, Version=11.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Sitecore.ContentSearch.SolrNetExtension.10.4.1\lib\net48\Sitecore.ContentSearch.SolrNetExtension.dll</HintPath>
+      <HintPath>packages\Sitecore.ContentSearch.SolrNetExtension.10.4.0\lib\net48\Sitecore.ContentSearch.SolrNetExtension.dll</HintPath>
     </Reference>
     <Reference Include="Sitecore.ContentSearch.SolrProvider, Version=11.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Sitecore.ContentSearch.SolrProvider.10.4.1\lib\net48\Sitecore.ContentSearch.SolrProvider.dll</HintPath>
+      <HintPath>packages\Sitecore.ContentSearch.SolrProvider.10.4.0\lib\net48\Sitecore.ContentSearch.SolrProvider.dll</HintPath>
     </Reference>
     <Reference Include="Sitecore.Kernel, Version=19.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Sitecore.Kernel.10.4.1\lib\net48\Sitecore.Kernel.dll</HintPath>
+      <HintPath>packages\Sitecore.Kernel.10.4.0\lib\net48\Sitecore.Kernel.dll</HintPath>
     </Reference>
     <Reference Include="SolrNet, Version=1.0.19.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\SolrNet.Core.1.0.19\lib\net46\SolrNet.dll</HintPath>

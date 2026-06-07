@@ -21,11 +21,11 @@ namespace SergMedium.ManagedSchemaExample.Processors
             var solrIndexCoreMap = args.SolrIndexCoreMap;
             if (solrIndexCoreMap != null)
             {
-                PopulateSolrCores(solrIndexCoreMap, args.SchemaName);
+                PopulateSolrCores(solrIndexCoreMap);
             }
         }
 
-        private void PopulateSolrCores(IReadOnlyDictionary<SolrSearchIndex, string[]> indexCoreMap, string schemaName)
+        private void PopulateSolrCores(IReadOnlyDictionary<SolrSearchIndex, string[]> indexCoreMap)
         {
             if (indexCoreMap.Count == 0)
             {
@@ -76,65 +76,66 @@ namespace SergMedium.ManagedSchemaExample.Processors
 
         private List<XElement> GetAllFields()
         {
-            return new List<XElement>
-            {
-                XElement.Parse(@"<replace-field-type>
-  <name>text_gen_sort</name>
-  <class>solr.SortableTextField</class>
+            var text = @"<replace-field-type xmlns:json=""http://james.newtonking.com/projects/json"">
+  <name>text_general</name>
+  <class>solr.TextField</class>
   <positionIncrementGap>100</positionIncrementGap>
-  <multiValued>true</multiValued>
+  <multiValued>false</multiValued>
 
   <indexAnalyzer>
-    <charFilters>
-      <name>patternReplace</name>
+    <charFilters json:Array=""true"">
+      <class>solr.PatternReplaceCharFilterFactory</class>
       <pattern>[\p{Punct}]</pattern>
       <replacement></replacement>
     </charFilters>
 
     <tokenizer>
-      <name>standard</name>
+      <class>solr.StandardTokenizerFactory</class>
     </tokenizer>
 
     <filters>
-      <name>stop</name>
+      <class>solr.StopFilterFactory</class>
       <words>stopwords.txt</words>
       <ignoreCase>true</ignoreCase>
     </filters>
 
     <filters>
-      <name>lowercase</name>
+      <class>solr.LowerCaseFilterFactory</class>
     </filters>
   </indexAnalyzer>
 
   <queryAnalyzer>
-    <charFilters>
-      <name>patternReplace</name>
+    <charFilters json:Array=""true"">
+      <class>solr.PatternReplaceCharFilterFactory</class>
       <pattern>[\p{Punct}]</pattern>
       <replacement></replacement>
     </charFilters>
 
     <tokenizer>
-      <name>standard</name>
+      <class>solr.StandardTokenizerFactory</class>
     </tokenizer>
 
     <filters>
-      <name>stop</name>
+      <class>solr.StopFilterFactory</class>
       <words>stopwords.txt</words>
       <ignoreCase>true</ignoreCase>
     </filters>
 
     <filters>
-      <name>synonymGraph</name>
+      <class>solr.SynonymGraphFilterFactory</class>
       <synonyms>synonyms.txt</synonyms>
       <expand>true</expand>
       <ignoreCase>true</ignoreCase>
     </filters>
 
     <filters>
-      <name>lowercase</name>
+      <class>solr.LowerCaseFilterFactory</class>
     </filters>
   </queryAnalyzer>
-</replace-field-type>"),
+</replace-field-type>";
+            return new List<XElement>
+            {
+                XElement.Parse(text),
             };
         }
     }
