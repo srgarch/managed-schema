@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Demo Search Page</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f7fa;
+            margin: 0;
+            padding: 40px;
+            color: #333;
+        }
+
+        /* ОДИНАКОВАЯ ширина и центрирование для поиска и результатов */
+        .search-container,
+        .results {
+            max-width: 600px; /* ключевой момент */
+            margin: 0 auto; /* центрируем оба блока */
+        }
+
+        /* Поисковый блок */
+        .search-container {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 14px 18px;
+            font-size: 18px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            outline: none;
+            transition: 0.2s;
+            box-sizing: border-box; /* чтобы padding не ломал ширину */
+        }
+
+            .search-box:focus {
+                border-color: #4a90e2;
+                box-shadow: 0 0 6px rgba(74, 144, 226, 0.4);
+            }
+
+        .search-btn {
+            margin-top: 15px;
+            padding: 12px 26px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            background: #4a90e2;
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+            .search-btn:hover {
+                background: #3b7ac2;
+            }
+
+        /* Результаты */
+        .results {
+            margin-top: 20px;
+        }
+
+        .result-item {
+            background: white;
+            padding: 20px;
+            margin-bottom: 18px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            box-sizing: border-box; /* тоже, чтобы ширина была ровно как у контейнера */
+        }
+
+        .result-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 6px;
+            color: #2a5db0;
+        }
+
+        .result-description {
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .countdown-circle {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            margin-top: 15px;
+        }
+
+            .countdown-circle svg {
+                transform: rotate(-90deg);
+                width: 40px;
+                height: 40px;
+            }
+
+            .countdown-circle circle {
+                fill: none;
+                stroke: #4a90e2;
+                stroke-width: 4;
+                stroke-dasharray: 113;
+                stroke-dashoffset: 113;
+                transition: stroke-dashoffset 1s linear;
+            }
+
+        #countdownNumber {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-wrapper">
+        <div class="search-container">
+            <h1>Search the site</h1>
+            <input id="searchInput" class="search-box" type="text" placeholder="Enter keywords..." />
+            <button class="search-btn" onclick="performSearch()">Search</button>
+            <button class="search-btn" id="autoBtn" onclick="toggleAutoSearch()">Start Auto</button>
+            <div id="countdown" style="margin-top: 15px; font-size: 20px; height: 30px;"></div>
+
+        </div>
+
+        <div id="results" class="results"></div>
+    </div>
+
+    <script>
+        let autoRunning = false;
+        let autoTimer = null;
+        let countdownTimer = null;
+        let countdownValue = 3;
+
+        async function fetchRandomWords() {
+            try {
+                const res = await fetch("https://random-word-api.herokuapp.com/word?number=5");
+                const words = await res.json();
+                return words.join(" ");
+            } catch (err) {
+                console.error("Word fetch failed:", err);
+                return "fallback random sentence";
+            }
+        }
+
+        function startCountdown() {
+            const el = document.getElementById("countdown");
+            countdownValue = 3;
+            el.textContent = `Next prompt in: ${countdownValue}`;
+
+            countdownTimer = setInterval(() => {
+                countdownValue--;
+                if (countdownValue <= 0) {
+                    clearInterval(countdownTimer);
+                    return;
+                }
+                el.textContent = `Next prompt in: ${countdownValue}`;
+            }, 1000);
+        }
+
+        async function autoSearchCycle() {
+            if (!autoRunning) return;
+
+            const sentence = await fetchRandomWords();
+            document.getElementById("searchInput").value = sentence;
+
+            performSearch();
+            console.log("Auto-search:", sentence);
+
+            startCountdown();
+
+            autoTimer = setTimeout(autoSearchCycle, 3000);
+        }
+
+        function toggleAutoSearch() {
+            const btn = document.getElementById("autoBtn");
+
+            if (!autoRunning) {
+                autoRunning = true;
+                btn.textContent = "Stop Auto";
+                startCountdown();
+                autoSearchCycle();
+            } else {
+                autoRunning = false;
+                btn.textContent = "Start Auto";
+                clearTimeout(autoTimer);
+                clearInterval(countdownTimer);
+                document.getElementById("countdown").textContent = "";
+                console.log("Auto search stopped");
+            }
+        }
+
+        function performSearch() {
+            const query = document.getElementById("searchInput").value.trim();
+            if (!query) return;
+
+            fetch(`/api/sitecore/ManagedSchemaExample?q=${encodeURIComponent(query)}`)
+                .then(r => r.json())
+                .then(data => renderResults(data));
+        }
+
+        document.getElementById("searchInput").addEventListener("keydown", function (e) {
+            if (e.key === "Enter") {
+                e.preventDefault();   // чтобы форма не перезагружала страницу
+                performSearch();
+            }
+        });
+
+
+        function renderResults(data) {
+            const container = document.getElementById("results");
+            container.innerHTML = "";
+
+            if (!data.results || data.results.length === 0) {
+                container.innerHTML = "<p>No results.</p>";
+                return;
+            }
+
+            data.results.forEach(item => {
+                const div = document.createElement("div");
+                div.className = "result-item";
+
+                div.innerHTML = `
+                    <div class="result-title">${item.title}</div>
+                    <div class="result-description">${item.description}</div>
+                `;
+
+                container.appendChild(div);
+            });
+        }
+    </script>
+
+</body>
+</html>
