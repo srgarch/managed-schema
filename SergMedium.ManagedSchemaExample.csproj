@@ -146,8 +146,6 @@
   <ItemGroup>
     <Content Include="App_Config\Include\SergMedium.ManagedSchemaExample.Processors.config" />
     <None Include="packages.config" />
-    <Content Include="Views\ManagedSchemaExample\MvcSampleLayout.cshtml" />
-    <Content Include="Views\ManagedSchemaExample\SearchPage.cshtml" />
     <None Include="web.config" />
   </ItemGroup>
   <ItemGroup />
